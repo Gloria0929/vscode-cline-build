@@ -45,6 +45,8 @@ code --install-extension dist/coder-bot-4.1.17.vsix
 
 `--source` 会直接编译仓库内这份**已汉化源码**（跳过补丁阶段），首次联网装依赖约需 2-4 分钟，产物为独立 VSIX。
 
+> **务必保留 `BUILD_WORK_DIR="$PWD"`**：脚本默认去 `/tmp/aicoder-local-build/cline` 找源码，不带这个变量会报 "Patched source tree not found" 而退出；`$PWD` 让它指向仓库根下的 `cline/` 这份源码。若需按上游 baseline 重新重建（会重新 clone 上游并套用脚本汉化、不保留仓库内手工改动），则去掉该变量直接跑 `bash scripts/build-local.sh`。
+
 > 注意：仓库刻意忽略了 `cline/node_modules` 与 `.vsix`/`dist` 产物，clone 下来是**纯净源码**，请按上述任一种方式构建后再运行。
 
 ## 快速开始
