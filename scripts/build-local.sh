@@ -44,7 +44,7 @@ fi
 WORK_DIR="${BUILD_WORK_DIR:-/tmp/aicoder-local-build}"
 CLONE_DIR="${WORK_DIR}/cline"
 OUT_DIR="${OUT_DIR:-${ROOT_DIR}/dist}"
-OUT_VSIX="${OUT_DIR}/coder-bot-4.1.17.vsix"
+OUT_VSIX="${OUT_DIR}/coder-4.1.17.vsix"
 
 MODE_LABEL="pipeline (clone + patch + build)"
 if [ "${SOURCE_MODE}" = "1" ]; then
