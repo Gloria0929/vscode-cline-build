@@ -1,0 +1,9 @@
+.env
+backup/
+workspace/*
+!workspace/.gitkeep
+*.log
+.DS_Store
+node_modules/
+dist/
+*.vsix

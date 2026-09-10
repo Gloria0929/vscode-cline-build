@@ -1,0 +1,43 @@
+services:
+  vscode-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CLINE_REPO: ${CLINE_REPO:-https://github.com/cline/cline.git}
+        CLINE_BRANCH: ${CLINE_BRANCH:-main}
+    container_name: vscode-cline
+    environment:
+      - PUID=${PUID:-500}
+      - PGID=${PGID:-20}
+      - TZ=${TZ:-Asia/Shanghai}
+      - PASSWORD=${PASSWORD:-888888}
+      - SUDO_PASSWORD=${SUDO_PASSWORD:-}
+      - PROXY_DOMAIN=${PROXY_DOMAIN:-}
+      - DEFAULT_WORKSPACE=/config/workspace
+    volumes:
+      # Persistent config (settings, extensions, user data)
+      - vscode-config:/config
+      # Project workspace — mount your code here
+      - ./workspace:/config/workspace
+      # Docker socket (optional, for Docker-in-Docker dev workflows)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "${PORT:-8443}:8443"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8443/healthz"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    networks:
+      - vscode-net
+
+volumes:
+  vscode-config:
+    driver: local
+
+networks:
+  vscode-net:
+    driver: bridge
