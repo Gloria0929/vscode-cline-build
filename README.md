@@ -1,17 +1,51 @@
-# AI Coder (VSCode Server) — 自托管 AI 编程助手
+# Coder (VSCode Server) — 自托管 AI 编程助手
 
-将 Cline 开源 AI 编程助手改造成 **AI Coder** 后直接集成到 Docker 化的 VSCode Server 中，无需下载插件，移除了登录功能，并自定义了图标体系。
+将 Cline 开源 AI 编程助手改造成 **Coder** 后直接集成到 Docker 化的 VSCode Server 中，无需下载插件，移除了登录功能，并自定义了图标体系。
 
 ## 特性
 
 - **Docker 一键部署** — 基于 code-server 的完整 VSCode 浏览器 IDE
-- **AI Coder 预装集成** — 从源码构建，直接打包进镜像，无需插件市场下载
+- **Coder 预装集成** — 从源码构建，直接打包进镜像，无需插件市场下载
 - **移除登录功能** — 去除账户认证系统，用户直接配置 API Key 使用
 - **自定义图标体系** — 彩色版用于扩展列表，白色单色版用于聊天框/活动栏/面板
-- **内置扩展集成** — AI Coder 以内置扩展（built-in）安装，普通列表不显示、无卸载按钮、无法被卸载
+- **内置扩展集成** — Coder 以内置扩展（built-in）安装，普通列表不显示、无卸载按钮、无法被卸载
 - **VSIX 导出** — 一键导出为独立插件包，可安装到任意 VS Code
 - **本地直接打包** — `scripts/build-local.sh` 无需 Docker 即可在 macOS 本地产出 VSIX
 - **持久化存储** — 配置、扩展、工作区数据持久化到 Docker Volume
+
+## 在别处使用本项目（Clone 后）
+
+用 Git 克隆到任意机器后即可运行 —— 仓库里已包含**汉化后的 Coder 源码**与全部构建脚本，无需再从零改造：
+
+```bash
+git clone https://github.com/Gloria0929/vscode-cline-build.git
+cd vscode-cline-build
+```
+
+### 方式 A：Docker 一键部署（推荐）
+
+只在目标机器安装 **Docker** + **Docker Compose**即可，无需 Node：
+
+```bash
+./build.sh build     # 首次构建自动用 .env.example 生成 .env，构建约 10-20 分钟
+```
+
+- 完成后浏览器打开 **`http://localhost:8443`**
+- 密码：`.env` 中的 `PASSWORD`（未改则为 `changeme`）
+- 常用命令：`./build.sh start|stop|rebuild|logs|shell|status`
+
+### 方式 B：本地编译 Coder 扩展（VSIX）
+
+无需 Docker，装有 **Bun**（或 Node）并能联网即可，直接把 Coder 装进本机 VS Code：
+
+```bash
+BUILD_WORK_DIR="$PWD" bash scripts/build-local.sh --source
+code --install-extension dist/coder-bot-4.1.17.vsix
+```
+
+`--source` 会直接编译仓库内这份**已汉化源码**（跳过补丁阶段），首次联网装依赖约需 2-4 分钟，产物为独立 VSIX。
+
+> 注意：仓库刻意忽略了 `cline/node_modules` 与 `.vsix`/`dist` 产物，clone 下来是**纯净源码**，请按上述任一种方式构建后再运行。
 
 ## 快速开始
 
@@ -39,15 +73,15 @@ docker compose up -d
 
 浏览器打开 `http://localhost:8443`，输入 `.env` 中设置的密码即可进入 IDE。
 
-### 4. 配置 AI Coder API Key
+### 4. 配置 Coder API Key
 
-进入 IDE 后，打开左侧活动栏的 **AI Coder** 面板（首次进入只有 "Bring my own API key" 选项），选择你的 AI 服务商（如 OpenAI、Anthropic、OpenRouter 等），填入 API Key 即可开始使用。
+进入 IDE 后，打开左侧活动栏的 **Coder** 面板（首次进入只有 "Bring my own API key" 选项），选择你的 AI 服务商（如 OpenAI、Anthropic、OpenRouter 等），填入 API Key 即可开始使用。
 
 ## 项目结构
 
 ```
 .
-├── Dockerfile                  # 多阶段构建：Stage1 编译 AI Coder, Stage2 部署 code-server
+├── Dockerfile                  # 多阶段构建：Stage1 编译 Coder, Stage2 部署 code-server
 ├── docker-compose.yml          # Docker Compose 编排文件
 ├── .env.example                # 环境变量模板
 ├── build/
@@ -60,7 +94,7 @@ docker compose up -d
 │   └── extensions.json         # 推荐扩展列表
 ├── scripts/
 │   ├── entrypoint.sh           # 容器入口：内置化同步扩展、登录隐藏、启动 code-server
-│   ├── export-vsix.sh          # 导出 AI Coder 为独立 VSIX 插件包（容器运行后执行）
+│   ├── export-vsix.sh          # 导出 Coder 为独立 VSIX 插件包（容器运行后执行）
 │   └── build-local.sh          # 本地 macOS 直接构建 VSIX，无需 Docker
 └── workspace/                  # 工作区目录（挂载到容器 /config/workspace）
 ```
@@ -138,7 +172,7 @@ CLINE_BRANCH=your-branch
 
 首次构建需要克隆 Cline 仓库、安装依赖、编译 TypeScript + React，通常 10-20 分钟。后续构建会利用 Docker 缓存层。
 
-### Q: AI Coder 显示登录残留按钮？
+### Q: Coder 显示登录残留按钮？
 
 修改脚本会尝试移除登录功能，但由于上游版本更新可能导致文件结构变化。如果登录按钮仍然出现：
 
@@ -168,13 +202,13 @@ Docker Desktop 守护进程可能假死，重启：
 pkill -f "Docker Desktop"; sleep 5; open -a Docker
 ```
 
-### Q: AI Coder 为什么在扩展列表找不到 / 无法卸载？
+### Q: Coder 为什么在扩展列表找不到 / 无法卸载？
 
-AI Coder 是**内置扩展**（built-in）：位于 code-server 系统扩展目录
+Coder 是**内置扩展**（built-in）：位于 code-server 系统扩展目录
 `/usr/lib/code-server/lib/vscode/extensions/`，普通"已安装"列表**不显示**，只在扩展面板"**内置**"分类出现，
 且**没有卸载按钮**（VS Code 禁止卸载内置扩展）。这是设计使然。
 
-### Q: 如何更新 AI Coder？
+### Q: 如何更新 Coder？
 
 ```bash
 docker compose build --no-cache

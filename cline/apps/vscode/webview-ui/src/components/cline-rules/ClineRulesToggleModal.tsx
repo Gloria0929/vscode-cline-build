@@ -632,31 +632,9 @@ const ClineRulesToggleModal: React.FC = () => {
 							</>
 						) : currentView === "hooks" ? (
 							<>
-								<div className="text-xs text-description mb-4">
-									<p>
-										{isWindows
-											? "On Windows, hooks execute whenever the hook file exists."
-											: "Toggle to enable/disable (chmod +x/-x)."}{" "}
-										<VSCodeLink
-											className="text-xs"
-											href="https://docs.cline.bot/features/hooks"
-											style={{ display: "inline", fontSize: "inherit" }}>
-											Docs
-										</VSCodeLink>
-									</p>
-								</div>
+								
 								{/* Hooks Tab */}
-								{/* Windows warning banner */}
-								{isWindows && (
-									<div className="flex items-center gap-2 px-3 py-3 mb-4 bg-vscode-inputValidation-warningBackground border-l-[3px] border-vscode-inputValidation-warningBorder">
-										<i className="codicon codicon-warning text-sm" />
-										<span className="text-base">
-											Hook toggling is not yet supported on Windows in this foundation PR. Hooks can be
-											created, edited, and deleted, and execute whenever the hook file exists. Coming next:
-											JSON-backed hook enabled/disabled state across platforms.
-										</span>
-									</div>
-								)}
+								
 
 								{/* Global Hooks */}
 								<div className="mb-3">
