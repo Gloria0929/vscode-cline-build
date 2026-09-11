@@ -1,9 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22.09 20.25">
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="aiGradient" x1="0" y1="10.12" x2="22.09" y2="10.12" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#3371ff"/>
-      <stop offset="1" stop-color="#579cff"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#1E40AF"/>
+    </linearGradient>
+    <linearGradient id="stroke" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#3B82F6"/>
     </linearGradient>
   </defs>
-  <path fill="url(#aiGradient)" d="M22.09,2.3c0,1.27-1.03,2.3-2.3,2.3s-2.3-1.03-2.3-2.3,1.03-2.3,2.3-2.3,2.3,1.03,2.3,2.3ZM19.33,10.59c0,5.34-4.33,9.66-9.66,9.66S0,15.92,0,10.59,4.33.92,9.66.92s9.66,4.33,9.66,9.66ZM12.1,14.22c0-.19-.09-.5-.26-.92l-2.24-5.52c-.1-.28-.19-.5-.26-.66-.07-.17-.15-.32-.25-.46-.1-.14-.23-.26-.39-.35-.16-.09-.36-.14-.6-.14s-.44.05-.6.14c-.16.09-.29.21-.39.36-.1.15-.19.33-.28.56-.09.22-.16.42-.23.58l-2.19,5.56c-.09.22-.15.39-.19.52-.04.12-.06.25-.06.36,0,.2.08.38.25.54.17.16.36.24.58.24.26,0,.44-.07.55-.22.11-.15.25-.44.41-.87l.41-1.1h3.48l.41,1.07c.05.13.12.29.2.46.08.17.15.3.21.38.07.08.15.15.25.2.1.05.21.07.35.07.23,0,.43-.08.6-.25.17-.17.25-.35.25-.54ZM15.17,7.21c0-.35-.08-.62-.24-.79-.16-.17-.37-.26-.63-.26s-.46.09-.62.26-.24.44-.24.79v6.74c0,.35.08.61.24.79.16.18.37.27.62.27s.47-.09.63-.26c.16-.17.24-.44.24-.79v-6.74ZM6.81,11.52h2.56l-1.29-3.53-1.27,3.53Z"/>
+
+  <!-- Background -->
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <!-- Terminal / code brackets -->
+  <path d="M40 44 L24 64 L40 84" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
+  <path d="M88 44 L104 64 L88 84" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.95"/>
+
+  <!-- Code slash -->
+  <path d="M72 38 L56 90" stroke="white" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+
+  <!-- AI sparkle -->
+  <g transform="translate(64,100)" opacity="0.85">
+    <path d="M0 -12 L3 -4 L11 -4 L5 1 L7 9 L0 4 L-7 9 L-5 1 L-11 -4 L-3 -4 Z" fill="white"/>
+  </g>
 </svg>

@@ -363,7 +363,7 @@ describe("ErrorRow", () => {
 			expect(mockNavigateToSettingsModelPicker).toHaveBeenCalledWith({ targetSection: "api-config" })
 		})
 
-		it("renders the provider message with no sign-in prompt for auth errors", async () => {
+		it("renders friendly logged-out message and sign in button when user is not signed in", async () => {
 			const mockClineError = {
 				message: "Authentication failed",
 				isErrorType: vi.fn((type) => type === "auth"),
@@ -376,10 +376,9 @@ describe("ErrorRow", () => {
 
 			render(<ErrorRow apiRequestFailedMessage="Authentication failed" errorType="error" message={mockMessage} />)
 
-			// Self-hosted build: accounts are removed, so auth errors surface the
-			// provider's message instead of a sign-in prompt.
-			expect(screen.getByText("Authentication failed")).toBeInTheDocument()
-			expect(screen.queryByText(/sign in/i)).not.toBeInTheDocument()
+			expect(screen.queryByText("Authentication failed")).not.toBeInTheDocument()
+			expect(screen.getByText(/Whoops looks like you're logged out/)).toBeInTheDocument()
+			expect(screen.getByText("Sign in to Cline")).toBeInTheDocument()
 		})
 
 		it("renders PowerShell troubleshooting link when error mentions PowerShell", async () => {

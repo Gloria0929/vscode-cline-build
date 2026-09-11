@@ -53,9 +53,7 @@ export function buildSdkProviderConfig(
 	mode: Mode,
 	options?: BuildApiHandlerOptions,
 ): ProviderConfig {
-	// Self-hosted build: the Cline account providers were removed, so an unset
-	// provider falls back to the default (OpenRouter) instead of a login-only one.
-	const providerId = (mode === "plan" ? configuration.planModeApiProvider : configuration.actModeApiProvider) ?? "openrouter"
+	const providerId = (mode === "plan" ? configuration.planModeApiProvider : configuration.actModeApiProvider) ?? "cline"
 
 	const apiKey = resolveApiKey(providerId, configuration)
 	const modelId = resolveModelId(providerId, mode, configuration)

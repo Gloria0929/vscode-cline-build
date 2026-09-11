@@ -16,6 +16,8 @@ import { AskSageProvider } from "./providers/AskSageProvider"
 import { BasetenProvider } from "./providers/BasetenProvider"
 import { BedrockProvider } from "./providers/BedrockProvider"
 import { ClaudeCodeProvider } from "./providers/ClaudeCodeProvider"
+import { ClinePassProvider } from "./providers/ClinePassProvider"
+import { ClineProvider } from "./providers/ClineProvider"
 import { DifyProvider } from "./providers/DifyProvider"
 import { GenericProviderSettings } from "./providers/GenericProviderSettings"
 import { GroqProvider } from "./providers/GroqProvider"
@@ -24,9 +26,11 @@ import { HuggingFaceProvider } from "./providers/HuggingFaceProvider"
 import { LiteLlmProvider } from "./providers/LiteLlmProvider"
 import { LMStudioProvider } from "./providers/LMStudioProvider"
 import { MoonshotProvider } from "./providers/MoonshotProvider"
+import { OcaProvider } from "./providers/OcaProvider"
 import { OllamaProvider } from "./providers/OllamaProvider"
 import { OpenAICompatibleProvider } from "./providers/OpenAICompatible"
 import { OpenAINativeProvider } from "./providers/OpenAINative"
+import { OpenAiCodexProvider } from "./providers/OpenAiCodexProvider"
 import { OpenRouterProvider } from "./providers/OpenRouterProvider"
 import {
 	getFallbackGenericProviderSettings,
@@ -57,13 +61,6 @@ interface ApiOptionsProps {
 // This is necessary to ensure dropdown opens downward, important for when this is used in popup
 export const DROPDOWN_Z_INDEX = OPENROUTER_MODEL_PICKER_Z_INDEX + 2 // Higher than the OpenRouterModelPicker's and ModelSelectorTooltip's z-index
 
-/**
- * Providers that cannot be configured without signing in to an account. This
- * self-hosted build ships no sign-in UI, so their ids are dropped from the
- * picker rather than leaving the user with a dead configuration.
- */
-const LOGIN_REQUIRED_PROVIDERS = new Set(["cline", "cline-pass", "openai-codex", "oca"])
-
 export const DropdownContainer = styled.div<{ zIndex?: number }>`
 	position: relative;
 	z-index: ${(props) => props.zIndex || DROPDOWN_Z_INDEX};
@@ -85,7 +82,14 @@ declare module "vscode" {
 	}
 }
 
-const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, isPopup, currentMode }: ApiOptionsProps) => {
+const ApiOptions = ({
+	showModelOptions,
+	apiErrorMessage,
+	modelIdErrorMessage,
+	isPopup,
+	currentMode,
+	initialModelTab,
+}: ApiOptionsProps) => {
 	// Use full context state for immediate save payload
 	const { apiConfiguration, remoteConfigSettings } = useExtensionState()
 
@@ -130,9 +134,6 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 			// Don't include VS Code LM API for non-VSCode platforms
 			providers = providers.filter((option) => option.value !== "vscode-lm")
 		}
-
-		// Drop providers whose configuration requires an account sign-in.
-		providers = providers.filter((option) => !LOGIN_REQUIRED_PROVIDERS.has(option.value))
 
 		// Filter by remote config if remoteConfiguredProviders is set
 		const remoteProviders: string[] = remoteConfigSettings?.remoteConfiguredProviders || []
@@ -348,16 +349,23 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 				</ProviderDropdownWrapper>
 			</DropdownContainer>
 
-			{LOGIN_REQUIRED_PROVIDERS.has(selectedProvider) && (
-				<p style={{ margin: 0, fontSize: 12, color: "var(--vscode-descriptionForeground)" }}>
-					该提供商需要账户登录，已在此版本中移除。请在上方选择其他 API 提供商。
-				</p>
-			)}
-
 			{!isPopup && <ClinePassHint currentMode={currentMode} selectedProvider={selectedProvider} />}
 
 			{apiConfiguration && selectedProvider === "hicap" && (
 				<HicapProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
+			)}
+
+			{apiConfiguration && selectedProvider === "cline" && (
+				<ClineProvider
+					currentMode={currentMode}
+					initialModelTab={initialModelTab}
+					isPopup={isPopup}
+					showModelOptions={showModelOptions}
+				/>
+			)}
+
+			{apiConfiguration && selectedProvider === "cline-pass" && (
+				<ClinePassProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
 			{apiConfiguration && selectedProvider === "asksage" && (
@@ -376,6 +384,10 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 				<OpenAINativeProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
+			{apiConfiguration && selectedProvider === "openai-codex" && (
+				<OpenAiCodexProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
+			)}
+
 			{apiConfiguration && selectedProvider === "qwen" && (
 				<QwenProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
@@ -388,7 +400,7 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 				<OpenRouterProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
-			{apiConfiguration && genericProviderSettings && !LOGIN_REQUIRED_PROVIDERS.has(selectedProvider) && (
+			{apiConfiguration && genericProviderSettings && (
 				<GenericProviderSettings
 					{...genericProviderSettings}
 					currentMode={currentMode}
@@ -457,20 +469,20 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 				<ZAiProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
+			{apiConfiguration && selectedProvider === "oca" && <OcaProvider currentMode={currentMode} isPopup={isPopup} />}
+
 			{apiConfiguration && selectedProvider === "aihubmix" && (
 				<AIhubmixProvider currentMode={currentMode} isPopup={isPopup} showModelOptions={showModelOptions} />
 			)}
 
-			{apiConfiguration &&
-				!LOGIN_REQUIRED_PROVIDERS.has(selectedProvider) &&
-				(selectedProvider === "openai" || isCustomProvider) && (
-					<OpenAICompatibleProvider
-						currentMode={currentMode}
-						isPopup={isPopup}
-						providerId={selectedProvider}
-						showModelOptions={showModelOptions}
-					/>
-				)}
+			{apiConfiguration && (selectedProvider === "openai" || isCustomProvider) && (
+				<OpenAICompatibleProvider
+					currentMode={currentMode}
+					isPopup={isPopup}
+					providerId={selectedProvider}
+					showModelOptions={showModelOptions}
+				/>
+			)}
 
 			{apiErrorMessage && (
 				<p

@@ -3,14 +3,9 @@
   "displayName": "Coder",
   "description": "Autonomous coding agent right in your IDE — self-hosted build: no account, no login, no telemetry.",
   "version": "4.1.17",
-  "icon": "assets/icons/icon.png",
+  "icon": "assets/icons/icon-color.svg",
   "engines": {
     "vscode": "^1.101.0"
-  },
-  "capabilities": {
-    "untrustedWorkspaces": {
-      "supported": true
-    }
   },
   "author": {
     "name": "Coder"

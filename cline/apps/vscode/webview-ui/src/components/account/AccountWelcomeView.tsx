@@ -1,18 +1,42 @@
+import { VSCodeButton, VSCodeLink } from "@vscode/webview-ui-toolkit/react"
+import { ClineAuthStatus } from "@/components/account/ClineAuthStatus"
+import { useClineSignIn } from "@/context/ClineAuthContext"
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import ClineLogoVariable from "../../assets/ClineLogoVariable"
+import { ClinePassWelcomeCallout } from "./ClinePassCard"
 
-/**
- * Self-hosted build: accounts, subscriptions and sign-in are removed, so this
- * view no longer offers a sign-up. It only points the user at API settings.
- */
+// export const AccountWelcomeView = () => (
+// 	<div className="flex flex-col items-center pr-3 gap-2.5">
+// 		<ClineLogoWhite className="size-16 mb-4" />
 export const AccountWelcomeView = () => {
 	const { environment } = useExtensionState()
+	const { isLoginLoading, authStatusMessage, handleSignIn } = useClineSignIn()
 
 	return (
 		<div className="flex flex-col items-center gap-2.5">
 			<ClineLogoVariable className="size-16 mb-4" environment={environment} />
-			<p className="text-(--vscode-descriptionForeground) text-center m-0">
-				此版本为自托管模式，未启用账户、订阅与登录功能。请在「设置 → API 配置」中选择服务商并填写 API 密钥。
+
+			<p>
+				Sign up for an account to get access to the latest models, billing dashboard to view usage and credits, and more
+				upcoming features.
+			</p>
+
+			<ClinePassWelcomeCallout />
+
+			<VSCodeButton className="w-full mb-4" disabled={isLoginLoading} onClick={handleSignIn}>
+				Sign up with Coder
+				{isLoginLoading && (
+					<span className="ml-1 animate-spin">
+						<span className="codicon codicon-refresh" />
+					</span>
+				)}
+			</VSCodeButton>
+
+			<ClineAuthStatus message={authStatusMessage} />
+
+			<p className="text-(--vscode-descriptionForeground) text-xs text-center m-0">
+				By continuing, you agree to the <VSCodeLink href="https://cline.bot/tos">Terms of Service</VSCodeLink> and{" "}
+				<VSCodeLink href="https://cline.bot/privacy">Privacy Policy.</VSCodeLink>
 			</p>
 		</div>
 	)

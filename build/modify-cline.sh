@@ -159,17 +159,15 @@ if [ -d "${ICONS_DIR}" ]; then
 fi
 
 # 3b. Replace webview logo components (keep export names & props API intact)
-#     The in-chat logo renders the SVG FILE directly and keeps the COLOR variant:
-#     the gradient mark stays legible on both light and dark panels, and matches
-#     what developers see in the extension development host. Only the activity
-#     bar / panel-title icon stays monochrome, because VS Code paints it through
-#     a theme-colored mask.
+#     The in-chat logo renders the SVG FILE directly (the mono icon is copied
+#     into the webview bundle as chat-logo.svg). Only the extension/plugin icon
+#     (assets/icons/icon.svg + icon.png) keeps the color variant.
 LOGO_DIR="${VSCODE_DIR}/webview-ui/src/assets"
 if [ -d "${LOGO_DIR}" ]; then
     echo "  - Pointing webview logo components at assets/chat-logo.svg..."
 
-    # Ship the COLOR icon inside the webview bundle as chat-logo.svg
-    cp "${CUSTOM_SVG}" "${LOGO_DIR}/chat-logo.svg" 2>/dev/null || true
+    # Ship the mono icon inside the webview bundle as chat-logo.svg
+    cp "${CUSTOM_MONO}" "${LOGO_DIR}/chat-logo.svg" 2>/dev/null || true
 
     # All three logo components now render that SVG file directly. The <img>
     # keeps the component props API (className/style/width/height) so callers
@@ -246,18 +244,6 @@ if command -v jq &> /dev/null; then
         .keywords = ["ai", "coder", "agent", "mcp", "coding", "assistant"]
     ' package.json > pkg.tmp && mv pkg.tmp package.json
     echo "  ✓ package.json renamed"
-fi
-
-# 3d-1b. Run in Restricted Mode without a workspace-trust gate.
-#   VS Code treats an extension that does NOT declare capabilities.untrustedWorkspaces
-#   as unsupported in untrusted workspaces and DISABLES it in Restricted Mode, so the
-#   sidebar stays empty until the user trusts the folder. Declaring support lets the
-#   extension activate immediately, like it does in the development host (whose
-#   launch.json passes --disable-workspace-trust).
-if command -v jq &> /dev/null; then
-    jq '.capabilities.untrustedWorkspaces = {"supported": true}' \
-        package.json > pkg.tmp && mv pkg.tmp package.json
-    echo "  ✓ untrustedWorkspaces declared (extension works without trusting the workspace)"
 fi
 
 # 3d-2. Rebrand the extension ID itself: publisher + name + command prefix
@@ -348,10 +334,10 @@ echo "  - Renaming walkthrough docs..."
 find "${VSCODE_DIR}/walkthrough" -name "*.md" -exec sedi 's/Cline/Coder/g' {} + 2>/dev/null || true
 echo "  ✓ Walkthrough docs renamed"
 
-# 3f. Rename user-visible strings in webview + extension source + SDK
+# 3f. Rename user-visible strings in webview + extension source
 #     Safe patterns: quoted string literals and JSX text only (never identifiers/imports)
 echo "  - Renaming source strings..."
-find "${VSCODE_DIR}/webview-ui/src" "${VSCODE_DIR}/src" "${SDK_DIR}/packages" \
+find "${VSCODE_DIR}/webview-ui/src" "${VSCODE_DIR}/src" \
     \( -name "*.ts" -o -name "*.tsx" \) ! -path "*node_modules*" \
     ! -name "*.test.ts" ! -name "*.spec.ts" -exec sedi \
     -e 's/"Cline /"Coder /g' \

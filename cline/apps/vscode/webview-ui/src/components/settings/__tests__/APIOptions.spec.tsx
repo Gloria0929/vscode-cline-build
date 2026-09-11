@@ -104,7 +104,10 @@ describe("ApiOptions Component", () => {
 		expect(modelIdInput).toBeInTheDocument()
 	})
 
-	it.each([["openai-native", "OpenAI API Key"]])("renders only the dedicated form for %s", (provider, dedicatedFormText) => {
+	it.each([
+		["openai-native", "OpenAI API Key"],
+		["openai-codex", "Sign in to OpenAI Codex"],
+	])("renders only the dedicated form for %s", (provider, dedicatedFormText) => {
 		mockExtensionState({
 			planModeApiProvider: provider as any,
 			actModeApiProvider: provider as any,
@@ -118,37 +121,6 @@ describe("ApiOptions Component", () => {
 
 		expect(screen.getByText(dedicatedFormText)).toBeInTheDocument()
 		expect(screen.queryByText("Custom Headers")).not.toBeInTheDocument()
-	})
-
-	// Providers that cannot work without an account sign-in are dropped from the
-	// picker entirely, and a stale selection explains why it shows no form.
-	it.each([
-		"cline",
-		"cline-pass",
-		"openai-codex",
-		"oca",
-	])("hides the login-required provider %s from the picker", (provider) => {
-		mockProviderListings([
-			{ allowsCustomModelIds: false, id: provider, name: provider, protocol: "openai-chat" },
-			{ allowsCustomModelIds: false, id: "openai-native", name: "OpenAI", protocol: "openai-chat" },
-		])
-		mockExtensionState({ actModeApiProvider: provider as any, planModeApiProvider: provider as any })
-
-		render(
-			<ExtensionStateContextProvider>
-				<ApiOptions currentMode="plan" showModelOptions={false} />
-			</ExtensionStateContextProvider>,
-		)
-
-		fireEvent.focus(screen.getByTestId("provider-selector-input"))
-
-		expect(screen.queryByTestId(`provider-option-${provider}`)).not.toBeInTheDocument()
-		expect(screen.getByTestId("provider-option-openai-native")).toBeInTheDocument()
-		expect(screen.getByText(/该提供商需要账户登录/)).toBeInTheDocument()
-		// A stale selection renders no settings form at all — not the curated
-		// generic form and not the OpenAI-compatible one.
-		expect(screen.queryByTestId("generic-provider-settings")).not.toBeInTheDocument()
-		expect(screen.queryByPlaceholderText("请输入接口地址...")).not.toBeInTheDocument()
 	})
 
 	it("renders the OpenAI-compatible form for custom/unknown catalog providers", () => {

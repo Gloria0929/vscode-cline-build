@@ -302,11 +302,8 @@ export const OpenAICompatibleProvider = ({
 	return (
 		<div>
 			<Tooltip>
-				{/* The trigger renders a shrink-to-fit <button>; without w-full the
-				    inner width:100% has no definite parent width and the 接口地址
-				    field collapses to its intrinsic width. */}
-				<TooltipTrigger className="block w-full">
-					<div className="mb-2.5 w-full">
+				<TooltipTrigger>
+					<div className="mb-2.5">
 						<div className="flex items-center gap-2 mb-1">
 							<span style={{ fontWeight: 500 }}>接口地址</span>
 							{remoteConfigSettings?.openAiBaseUrl !== undefined && (
@@ -340,7 +337,7 @@ export const OpenAICompatibleProvider = ({
 
 			<label htmlFor="openai-compatible-model-picker">
 				<span style={{ fontWeight: 500 }}>模型 ID</span>
-				{isRefreshingOpenAiModels && <span> 正在加载模型…</span>}
+					{isRefreshingOpenAiModels && <span> 正在加载模型…</span>}
 			</label>
 			{openAiModelsError && <div role="alert">{openAiModelsError}</div>}
 			{availableOpenAiModels.length > 0 ? (
@@ -519,7 +516,7 @@ export const OpenAICompatibleProvider = ({
 					onChange={(value) => handleFieldChange("azureApiVersion", value)}
 					placeholder={`默认：${azureOpenAiDefaultApiVersion}`}
 				/>
-			)}
+				)}
 
 			<VSCodeCheckbox
 				checked={apiConfiguration?.azureIdentity || false}
@@ -551,7 +548,7 @@ export const OpenAICompatibleProvider = ({
 						textTransform: "uppercase",
 					}}>
 					模型配置
-				</span>
+					</span>
 			</div>
 
 			{modelConfigurationSelected && (
@@ -567,9 +564,9 @@ export const OpenAICompatibleProvider = ({
 						}
 						onChange={(e: any) => updateModelOverride("supportsVision", e.target.checked === true)}>
 						支持图片
-					</VSCodeCheckbox>
+							</VSCodeCheckbox>
 
-					<div style={{ display: "flex", gap: 10, marginTop: "5px" }}>
+						<div style={{ display: "flex", gap: 10, marginTop: "5px" }}>
 						<div style={{ flex: 1 }}>
 							<DebouncedTextField
 								initialValue={formatOptionalModelNumber(openAiModelInfo?.contextWindow)}
@@ -594,9 +591,7 @@ export const OpenAICompatibleProvider = ({
 						<div style={{ flex: 1 }}>
 							<DebouncedTextField
 								initialValue={formatOptionalModelNumber(openAiModelInfo?.inputPrice)}
-								onChange={(value) =>
-									updateNumericModelOverride("inputPrice", "输入价格，单位：美元 / 百万", value)
-								}>
+								onChange={(value) => updateNumericModelOverride("inputPrice", "输入价格，单位：美元 / 百万", value)}>
 								<span style={{ fontWeight: 500 }}>输入价格 / 百万 token</span>
 							</DebouncedTextField>
 							{modelFieldErrors.inputPrice && <div role="alert">{modelFieldErrors.inputPrice}</div>}
@@ -605,9 +600,7 @@ export const OpenAICompatibleProvider = ({
 						<div style={{ flex: 1 }}>
 							<DebouncedTextField
 								initialValue={formatOptionalModelNumber(openAiModelInfo?.outputPrice)}
-								onChange={(value) =>
-									updateNumericModelOverride("outputPrice", "输出价格，单位：美元 / 百万", value)
-								}>
+								onChange={(value) => updateNumericModelOverride("outputPrice", "输出价格，单位：美元 / 百万", value)}>
 								<span style={{ fontWeight: 500 }}>输出价格 / 百万 token</span>
 							</DebouncedTextField>
 							{modelFieldErrors.outputPrice && <div role="alert">{modelFieldErrors.outputPrice}</div>}
@@ -635,8 +628,7 @@ export const OpenAICompatibleProvider = ({
 					color: "var(--vscode-descriptionForeground)",
 				}}>
 				<span style={{ color: "var(--vscode-errorForeground)" }}>
-					(<span style={{ fontWeight: 500 }}>注意：</span>Coder
-					使用复杂提示词，因此行为可能因模型而异。能力较弱的模型可能无法如预期工作。)
+					(<span style={{ fontWeight: 500 }}>注意：</span>Coder 使用复杂提示词，因此行为可能因模型而异。能力较弱的模型可能无法如预期工作。)
 				</span>
 			</p>
 
