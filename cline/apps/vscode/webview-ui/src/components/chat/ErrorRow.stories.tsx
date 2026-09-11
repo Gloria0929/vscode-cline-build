@@ -1,7 +1,7 @@
 import { ClineMessage } from "@shared/ExtensionMessage"
 import type { Meta, StoryObj } from "@storybook/react-vite"
 import { useMemo } from "react"
-import { expect, userEvent, within } from "storybook/test"
+import { expect, within } from "storybook/test"
 import { createStorybookDecorator } from "@/config/StorybookDecorator"
 import ErrorRow from "./ErrorRow"
 
@@ -279,7 +279,7 @@ export const AuthErrorSignedIn: Story = {
 }
 
 // Interactive tests
-export const InteractiveSignIn: Story = {
+export const AuthErrorWithoutSignIn: Story = {
 	args: {
 		message: createMockMessage(),
 		errorType: "error",
@@ -293,15 +293,9 @@ export const InteractiveSignIn: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement)
 
-		// Find the sign in button
-		const signInButton = canvas.getByRole("button", { name: /sign in to cline/i })
-		await expect(signInButton).toBeInTheDocument()
-
-		// Test button is clickable
-		await expect(signInButton).toBeEnabled()
-
-		// Click the button (this will trigger the mock handler)
-		await userEvent.click(signInButton)
+		// Self-hosted build: the auth error is shown verbatim with no sign-in UI.
+		await expect(canvas.getByText(/Please sign in to access Cline services/)).toBeInTheDocument()
+		expect(canvas.queryByRole("button", { name: /sign in/i })).not.toBeInTheDocument()
 	},
 }
 
