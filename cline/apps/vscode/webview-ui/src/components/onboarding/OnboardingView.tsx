@@ -120,7 +120,7 @@ const ModelSelection = ({
 					</ItemTitle>
 					{isSelected && model.info && (
 						<ItemDescription>
-							<span className="text-foreground/70 text-sm">Support: </span>
+							<span className="text-foreground/70 text-sm">支持：</span>
 							<span className="text-foreground text-sm">{getCapabilities(model.info).join(", ")}</span>
 						</ItemDescription>
 					)}
@@ -130,14 +130,14 @@ const ModelSelection = ({
 						<div className="flex flex-col gap-3">
 							<div className="inline-flex gap-1 [&_svg]:stroke-success [&_svg]:size-3 items-center text-sm">
 								<ZapIcon />
-								<span>Speed: </span>
+								<span>速度：</span>
 								<span className="text-foreground/70">{getSpeedLabel(model.latency)}</span>
 							</div>
 							{model.info && (
 								<div className="flex w-full justify-between">
 									<div className="inline-flex gap-1 [&_svg]:stroke-foreground [&_svg]:size-3 items-center text-sm">
 										<ListIcon />
-										<span>Context: </span>
+										<span>上下文：</span>
 										<span className="text-foreground/70">{(model?.info.contextWindow || 0) / 1000}k</span>
 									</div>
 									{!hidePrice && <Badge>{getPriceRange(model.info)}</Badge>}
@@ -154,8 +154,8 @@ const ModelSelection = ({
 	if (isClinePass && modelGroups.length === 0) {
 		return (
 			<div className="flex w-full max-w-lg flex-col items-center justify-center my-8 px-2 text-center">
-				<p className="text-foreground text-sm m-0">No ClinePass models are available right now.</p>
-				<p className="text-foreground/70 text-sm mt-1">Please choose another option or try again later.</p>
+				<p className="text-foreground text-sm m-0">当前没有可用的 ClinePass 模型。</p>
+					<p className="text-foreground/70 text-sm mt-1">请选择其他选项或稍后重试。</p>
 			</div>
 		)
 	}
@@ -186,7 +186,7 @@ const ModelSelection = ({
 			{!isClinePass && (
 				<div className="flex w-full max-w-lg flex-col gap-6 my-4 border-t border-muted-foreground">
 					<div className="flex flex-col gap-3 mt-6" key="search-results">
-						<h4 className="text-sm font-bold text-foreground/70 uppercase mb-2">other options</h4>
+						<h4 className="text-sm font-bold text-foreground/70 uppercase mb-2">其他选项</h4>
 						<Input
 							autoFocus={false}
 							className="focus-visible:border-button-background"
@@ -197,7 +197,7 @@ const ModelSelection = ({
 								setSearchTerm(e.target.value)
 							}}
 							onClick={() => onSelectModel("")}
-							placeholder="Search model..."
+							placeholder="搜索模型..."
 							type="search"
 							value={searchTerm}
 						/>
@@ -238,7 +238,7 @@ const ModelSelection = ({
 									return <ModelItem id={id} isSelected={isSelected} key={id} model={onboardingModel} />
 								})}
 							{searchTerm.length > 0 && searchedModels.length === 0 && (
-								<p className="px-1 mt-1 text-sm text-foreground/70">No result found for "{searchTerm}"</p>
+								<p className="px-1 mt-1 text-sm text-foreground/70">未找到"{searchTerm}"的相关结果</p>
 							)}
 						</div>
 					</div>
@@ -286,7 +286,7 @@ const UserTypeSelectionStep = ({ userType, onSelectUserType, userTypeSelections 
 												).catch((err) => console.error("Failed to open learn more link:", err))
 											}}
 											style={{ fontSize: "inherit" }}>
-											Learn more
+											学习更多
 										</VSCodeLink>
 									</>
 								)}
@@ -362,7 +362,8 @@ const OnboardingViewContent = ({ onboardingModels }: { onboardingModels: Onboard
 	const loginLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const viewedPageTelemetryKeysRef = useRef<Set<string>>(new Set())
 
-	const [stepNumber, setStepNumber] = useState(0)
+	// 直接进入 BYOK 配置页（API 配置），跳过用户类型选择页
+	const [stepNumber, setStepNumber] = useState(1)
 	const [isActionLoading, setIsActionLoading] = useState(false)
 	const [userType, setUserType] = useState<NEW_USER_TYPE>(NEW_USER_TYPE.BYOK)
 
@@ -661,20 +662,20 @@ const OnboardingViewContent = ({ onboardingModels }: { onboardingModels: Onboard
 								onClick={() => handleFooterAction(btn.action)}
 								variant={btn.variant}>
 								{showSpinner && <LoaderCircleIcon className="mr-2 size-4 animate-spin" />}
-								{showSpinner ? "Waiting for sign in..." : btn.text}
+								{showSpinner ? "等待登录完成..." : btn.text}
 							</Button>
 						)
 					})}
 
 					{isActionLoading && stepNumber !== 2 && (
 						<div className="items-center justify-center flex text-sm text-foreground/70 text-pretty text-center">
-							Complete sign in in your browser. We'll continue automatically once you're done.
+							在浏览器中完成登录。完成后我们将自动继续。
 						</div>
 					)}
 
 					{stepNumber !== 2 && (
 						<div className="items-center justify-center flex text-sm text-foreground gap-2 mb-3 text-pretty">
-							<AlertCircleIcon className="shrink-0 size-2" /> You can change this later in settings
+							<AlertCircleIcon className="shrink-0 size-2" /> 以后可在设置中更改此配置
 						</div>
 					)}
 				</footer>

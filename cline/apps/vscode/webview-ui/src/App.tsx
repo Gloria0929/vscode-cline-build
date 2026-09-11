@@ -72,7 +72,7 @@ const AppContent = () => {
 		return null
 	}
 
-	if (false) {
+	if (showWelcome) {
 		return <OnboardingView />
 	}
 
