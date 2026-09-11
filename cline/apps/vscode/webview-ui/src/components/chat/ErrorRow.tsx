@@ -1,6 +1,5 @@
 import type { ClineMessage } from "@shared/ExtensionMessage"
 import { memo } from "react"
-import { ClineAuthStatus } from "@/components/account/ClineAuthStatus"
 import ClineFreeModelLimitError from "@/components/chat/ClineFreeModelLimitError"
 import ClineFreePromotionEndedError from "@/components/chat/ClineFreePromotionEndedError"
 import ClinePassLimitError from "@/components/chat/ClinePassLimitError"
@@ -8,8 +7,6 @@ import CreditLimitError from "@/components/chat/CreditLimitError"
 import EntitlementError from "@/components/chat/EntitlementError"
 import OrgClinePassRestrictionError from "@/components/chat/OrgClinePassRestrictionError"
 import SpendLimitError from "@/components/chat/SpendLimitError"
-import { Button } from "@/components/ui/button"
-import { useClineAuth, useClineSignIn } from "@/context/ClineAuthContext"
 import { ClineError, ClineErrorType } from "../../../../src/services/error/ClineError"
 
 const _errorColor = "var(--vscode-errorForeground)"
@@ -22,10 +19,7 @@ interface ErrorRowProps {
 }
 
 const ErrorRow = memo(({ message, errorType, apiRequestFailedMessage, apiReqStreamingFailedMessage }: ErrorRowProps) => {
-	const { clineUser } = useClineAuth()
 	const rawApiError = apiRequestFailedMessage || apiReqStreamingFailedMessage
-
-	const { isLoginLoading, authStatusMessage, handleSignIn } = useClineSignIn()
 
 	const renderErrorContent = () => {
 		switch (errorType) {
@@ -113,28 +107,9 @@ const ErrorRow = memo(({ message, errorType, apiRequestFailedMessage, apiReqStre
 					}
 
 					if (clineError?.isErrorType(ClineErrorType.Auth) && isClineUsageBillingProvider) {
-						return !clineUser ? (
-							// User is using Cline provider and is not logged in
-							<div className="flex flex-col gap-3">
-								<div className="flex items-center justify-center rounded border border-neutral-500/30 bg-vscode-editor-background p-6 text-center text-vscode-foreground">
-									Whoops looks like you're logged out – click below to sign in
-								</div>
-								<Button className="w-full" disabled={isLoginLoading} onClick={handleSignIn}>
-									Sign in to Coder
-									{isLoginLoading && (
-										<span className="ml-1 animate-spin">
-											<span className="codicon codicon-refresh" />
-										</span>
-									)}
-								</Button>
-								<ClineAuthStatus message={authStatusMessage} />
-							</div>
-						) : (
-							// Don't show sign in button after the user has logged in, just ask them to retry
-							<div className="mt-4">
-								<span className="text-description">(Click "重试" below)</span>
-							</div>
-						)
+						// Self-hosted build: there is no account sign-in flow, so surface the
+						// provider's own message instead of prompting the user to log in.
+						return <p className="m-0 whitespace-pre-wrap text-error wrap-anywhere">{errorMessage}</p>
 					}
 
 					return (

@@ -161,12 +161,9 @@ export function transformRemoteConfigToStateShape(remoteConfig: RemoteConfig): P
 		}
 	}
 
-	const clineSettings = remoteConfig.providerSettings?.Cline
-	if (clineSettings) {
-		transformed.planModeApiProvider = "cline"
-		transformed.actModeApiProvider = "cline"
-		providers.push("cline")
-	}
+	// The Cline account provider was removed from this self-hosted build, so
+	// remote config can no longer pin it: that would select a provider with no
+	// settings form and no way to authenticate.
 
 	// Map LiteLLM provider settings
 	const liteLlmSettings = remoteConfig.providerSettings?.LiteLLM
